@@ -1,87 +1,116 @@
+import 'dotenv/config'; 
 import express from "express";
 import jwt from "jsonwebtoken";
-import { middleware } from "./middleware";
+import { middleware } from "./middleware.js";
 import {JWT_SECRET} from "@repo/backend-common/config";
-import {CreateUserSchema , SignInSchema , CreateRoomSchema} from "@repo/common/types"
+import {CreateUserSchema , SignInSchema , CreateRoomSchema} from "@repo/common/types";
+import {prismaClient} from "@repo/db/client"
 
 const app = express();
 
-app.post('/signup',(req,res)=>{
+app.use(express.json());
 
-    const data = CreateUserSchema.safeParse(req.body);
+app.post('/signup',async(req,res)=>{
+    try {
+        const PrasedData = CreateUserSchema.safeParse(req.body);
 
-    if(!data.success){
-        return res.json({
-            message : "Incorrect Inputs"
+        if(!PrasedData.success){
+            return res.json({
+                message : "Incorrect Inputs"
+            })
+        }
+
+        const exists = await prismaClient.user.findUnique({
+            where: {
+                email: PrasedData.data.email, // 'email' is a unique field
+              },
+        });
+        // @ts-ignore
+        if(exists){
+            return res.json({
+                message : "Already Registered" ,
+                success : false
+            })
+        }
+
+        const user = await prismaClient.user.create({
+            // @ts-ignore
+            data : {
+                email : PrasedData.data?.email , 
+                password : PrasedData.data.password ,
+                name : PrasedData.data.name
+            }
+        });
+
+
+
+        const token = jwt.sign({ userId: user }, JWT_SECRET)
+        
+        return res.status(200).json({
+            message : "SignUp Success" ,
+            error : "false" ,
+            success : "true" ,
+            token : token
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message : "Server side error" ,
+            success : false , 
+            error : error
         })
     }
+})
 
-    const {email , password} = req.body;
-    if(!email && !password){
-        return res.json({
-            message : "Provide the email and password" ,
-            error : "true" ,
-            success : "false"
-        })
-    }
-    const token = jwt.sign({ userId: email }, JWT_SECRET)
+// app.post('/signin',(req,res)=>{
+
+//     const data = SignInSchema.safeParse(req.body);
+
+//     if(!data.success){
+//         return res.json({
+//             message : "Incorrect Inputs"
+//         })
+//     }
+
+//     const user = prismaClient.user.findUnique({email : req.body.email});
+
+//     if(!user){
+//         return res.json({
+//             message : "Dont Found This Email" ,
+//             success : false
+//         })
+//     }
+
+//     const token = jwt.sign({ userId: user }, JWT_SECRET)
     
-    return res.status(200).json({
-        message : "Login Success" ,
-        error : "false" ,
-        success : "true" ,
-        token : token
-    })
+//     return res.status(200).json({
+//         message : "Login Success" ,
+//         error : "false" ,
+//         success : "true" ,
+//         token : token
+//     })
 
-})
+// })
 
-app.post('/signin',(req,res)=>{
+// app.post('/create-room',middleware,(req,res)=>{
 
-    const data = SignInSchema.safeParse(req.body);
+//     const data = CreateRoomSchema.safeParse(req.body);
 
-    if(!data.success){
-        return res.json({
-            message : "Incorrect Inputs"
-        })
-    }
+//     if(!data.success){
+//         return res.json({
+//             message : "Incorrect Inputs"
+//         })
+//     }
 
-    const {email , password} = req.body;
-    if(!email && !password){
-        return res.json({
-            message : "Provide the email and password" ,
-            error : "true" ,
-            success : "false"
-        })
-    }
-    const token = jwt.sign({ email: email }, JWT_SECRET)
-    
-    return res.status(200).json({
-        message : "Login Success" ,
-        error : "false" ,
-        success : "true" ,
-        token : token
-    })
+//     const {roomId} = req.body ;
 
-})
-
-app.post('/create-room',middleware,(req,res)=>{
-
-    const data = CreateRoomSchema.safeParse(req.body);
-
-    if(!data.success){
-        return res.json({
-            message : "Incorrect Inputs"
-        })
-    }
-
-    const {roomId} = req.body ;
-
-    // check whether roomId exists 
+//     // check whether roomId exists 
 
 
-    return res.json({
-        roomId : "123"
-    })
-})
+//     return res.json({
+//         roomId : "123"
+//     })
+// })
 
 app.listen(3001);
