@@ -10,18 +10,20 @@
     "start": "node ./dist/index.js"
   },
   "dependencies": {
+    "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "dotenv": "^16.4.5"
+    "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@types/express": "^5.0.6",
-    "@repo/db":"workspace:*",
     "@repo/backend-common": "workspace:*",
-    "@repo/common": "workspace:*"
+    "@repo/common": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/express": "^5.0.6"
   },
   "keywords": [],
   "author": "",
