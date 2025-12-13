@@ -1,0 +1,5 @@
+mouseDownHandler = (e) => {
+        this.clicked = true
+        this.startX = e.clientX
+        this.startY = e.clientY
+    }

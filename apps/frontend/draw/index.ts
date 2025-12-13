@@ -1,5 +1,5 @@
-import { http_server } from "@/config";
-import axios from "axios";
+import { clearCanvas } from "@/components/clearCanvas";
+import { getExistingContent } from "@/components/getContent";
 
 type shape = {
     type : string,
@@ -55,52 +55,6 @@ export async function drawon(canvas : HTMLCanvasElement,roomId : string , socket
         }
     })
     canvas.addEventListener("mouseup",(e)=>{
-        clicked = false ;
-        width = e.offsetX - startx;
-        height = e.offsetY - starty;
-        ctx.strokeStyle = "rgba(255,255,255)"
-        ctx.strokeRect(startx,starty,width,height)
-        existingShape.push({
-            type:"rect",
-            x:startx,
-            y:starty,
-            width:width,
-            height:height
-        })
-
-        socket.send(JSON.stringify({
-            type: "chat",
-            message: JSON.stringify({
-                type:"rect",
-                x:startx,
-                y:starty,
-                width:width,
-                height:height
-            }),
-            roomId
-        }))
+       
     })
-}
-
-export function clearCanvas(canvas : HTMLCanvasElement , ctx : CanvasRenderingContext2D , existingShape : shape[]){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "rgba(0,0,0)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    existingShape.map(s =>{
-        ctx.strokeStyle = "rgba(255,255,255)"
-        ctx.strokeRect(s.x,s.y,s.width,s.height);
-    })
-}
-
-export async function getExistingContent(roomId : string){
-    const res = await axios.get(`${http_server}/chats/${roomId}`);
-    const messages = res.data.messages ;
-
-    const shapes = messages.map((s : {message: string})=> {
-        const parsedData = JSON.parse(s.message);
-        return parsedData;
-    })
-
-    return shapes ; 
 }
