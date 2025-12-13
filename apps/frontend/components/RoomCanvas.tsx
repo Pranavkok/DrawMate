@@ -3,13 +3,21 @@
 import { useEffect,useState } from "react" ;
 import MainCanvas from "./MainCanvas";
 import { ws_server } from "@/config";
+import SomethingWentWrong from "./GotError";
+import { useRouter } from "next/navigation";
 
 export default function RoomCanvas({roomId}: {roomId: string}){
 
     const [socket,setSocket] = useState<WebSocket | null>(null);
+    const router = useRouter();
 
     useEffect(()=>{
-        const ws = new WebSocket(`${ws_server}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlM2VlNmZhYy1kM2IzLTQ3YjMtODNiZi03NmRkMDk5MTk2YzkiLCJpYXQiOjE3NjUzNTExOTB9.hFioep67-sjn5fRG57Y0-Vqb-1QeGkaN50uIY4C-vFQ`);
+        const token = localStorage.getItem("token");
+        if(!token){
+            alert("Please Login First ");
+            router.push('/signin')
+        }
+        const ws = new WebSocket(`${ws_server}?token=${token}`);
         
         ws.onopen = ()=>{
             setSocket(ws);
@@ -21,12 +29,10 @@ export default function RoomCanvas({roomId}: {roomId: string}){
 
             ws.send(JSON.stringify(data))
         }
-    },[]);
+    },[roomId]);
 
     if (!socket) {
-        return <div>
-            Connecting to server....
-        </div>
+        return <SomethingWentWrong/>
     }
 
     return(

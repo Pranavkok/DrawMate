@@ -14,7 +14,8 @@ app.post('/signup', async (req, res) => {
         const PrasedData = CreateUserSchema.safeParse(req.body);
         if (!PrasedData.success) {
             return res.json({
-                message: "Incorrect Inputs"
+                message: "Incorrect Inputs",
+                success: false
             });
         }
         const exists = await prismaClient.user.findUnique({
@@ -41,7 +42,7 @@ app.post('/signup', async (req, res) => {
         return res.status(200).json({
             message: "SignUp Success",
             error: "false",
-            success: "true",
+            success: true,
             token: token
         });
     }
@@ -58,7 +59,8 @@ app.post('/signin', async (req, res) => {
     const PrasedData = SignInSchema.safeParse(req.body);
     if (!PrasedData.success) {
         return res.json({
-            message: "Incorrect Inputs"
+            message: "Incorrect Inputs",
+            success: false
         });
     }
     const user = await prismaClient.user.findUnique({ where: { email: PrasedData.data.email, password: PrasedData.data.password } });
@@ -72,7 +74,7 @@ app.post('/signin', async (req, res) => {
     return res.status(200).json({
         message: "Login Success",
         error: "false",
-        success: "true",
+        success: true,
         token: token
     });
 });
@@ -83,7 +85,8 @@ app.post('/create-room', middleware, async (req, res) => {
         const userid = req.userId;
         if (!PrasedData.success) {
             return res.json({
-                message: "Incorrect Inputs"
+                message: "Incorrect Inputs",
+                success: false
             });
         }
         // check whether roomId exists 

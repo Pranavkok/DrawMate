@@ -9,6 +9,7 @@ import {
   Github, Twitter
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // ============== HEADER ==============
 const Header = () => {
@@ -57,8 +58,12 @@ const Header = () => {
               <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors font-body py-2">How it works</a>
               <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-body py-2">Pricing</a>
               <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
+              <Link href={"/signin"}>
                 <Button className="text-gray-700 p-1 rounded-2xl hover:text-gray-900 hover:bg-gray-100">Sign in</Button>
-                <Button  className="bg-orange-500 p-1 rounded-2xl hover:bg-orange-600 text-white">Start Drawing</Button>
+              </Link> 
+              <Link href={"/signup"}>
+                <Button  className="bg-orange-500 p-1 rounded-2xl hover:bg-orange-600 text-white">Register</Button>
+              </Link>
               </div>
             </nav>
           </motion.div>
@@ -143,6 +148,7 @@ const CanvasPreview = () => {
 
 // ============== HERO ==============
 const Hero = () => {
+  const router = useRouter();
   return (
     <section className="pt-32 pb-20 px-4 overflow-hidden bg-white">
       <div className="container mx-auto">
@@ -162,18 +168,24 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="group rounded-2xl bg-orange-500 hover:bg-orange-600 text-white">
+              <button onClick={()=>{
+                if(localStorage.getItem("token")){
+                  router.push('/dashboard')
+                }else{
+                  router.push('/signin')
+                }
+              }} className="group rounded-2xl bg-orange-500 hover:bg-orange-600 text-white">
                 <div className="flex flex-row gap-4 p-4 justify-between">
                 <p>Start Drawing Free</p>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
-              </Button>
-              <Button className="group bg-white border-2 rounded-2xl border-orange-500 text-orange-500 hover:bg-orange-50">
+              </button>
+              <button className="group bg-white border-2 rounded-2xl border-orange-500 text-orange-500 hover:bg-orange-50">
                 <div className="flex flex-row gap-4 p-4 justify-between">
                   <Play className="w-5 h-5" />
                   Watch Demo
                 </div>
-              </Button>
+              </button>
             </div>
 
             <div className="mt-10 flex items-center gap-6">
@@ -275,6 +287,7 @@ const HowItWorks = () => {
 
 // ============== CTA ==============
 const CTA = () => {
+  const router = useRouter();
   return (
     <section className="py-24 px-4 relative overflow-hidden bg-gradient-to-br from-orange-50 to-white">
       <div className="absolute top-0 left-1/4 w-64 h-64 bg-orange-200 rounded-full blur-3xl opacity-40" />
@@ -291,10 +304,16 @@ const CTA = () => {
           <p className="text-lg md:text-xl text-gray-600 font-body mb-10 max-w-xl mx-auto">Join thousands of creators, designers, and teams who sketch their ideas on Sketchboard every day.</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button  className="group p-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white">
+            <button onClick={()=>{
+                if(localStorage.getItem("token")){
+                  router.push('/dashboard')
+                }else{
+                  router.push('/signin')
+                }
+              }} className="group p-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white">
               Start Drawing Now
-            </Button>
-            <Button className="bg-white border-2 p-4 rounded-2xl border-orange-500 text-orange-500 hover:bg-orange-50">View Examples</Button>
+            </button>
+            <button className="bg-white border-2 p-4 rounded-2xl border-orange-500 text-orange-500 hover:bg-orange-50">View Examples</button>
           </div>
 
           <p className="mt-8 text-sm text-gray-600 font-body">No credit card required • Works in your browser • Export anytime</p>

@@ -18,7 +18,8 @@ app.post('/signup',async(req,res)=>{
 
         if(!PrasedData.success){
             return res.json({
-                message : "Incorrect Inputs"
+                message : "Incorrect Inputs",
+                success : false 
             })
         }
 
@@ -51,7 +52,7 @@ app.post('/signup',async(req,res)=>{
         return res.status(200).json({
             message : "SignUp Success" ,
             error : "false" ,
-            success : "true" ,
+            success : true ,
             token : token
         })
         
@@ -71,7 +72,8 @@ app.post('/signin',async(req,res)=>{
 
     if(!PrasedData.success){
         return res.json({
-            message : "Incorrect Inputs"
+            message : "Incorrect Inputs",
+            success : false 
         })
     }
 
@@ -89,7 +91,7 @@ app.post('/signin',async(req,res)=>{
     return res.status(200).json({
         message : "Login Success" ,
         error : "false" ,
-        success : "true" ,
+        success : true ,
         token : token
     })
 
@@ -103,7 +105,8 @@ app.post('/create-room',middleware,async(req,res)=>{
 
         if(!PrasedData.success){
             return res.json({
-                message : "Incorrect Inputs"
+                message : "Incorrect Inputs",
+                success : false
             })
         }
 

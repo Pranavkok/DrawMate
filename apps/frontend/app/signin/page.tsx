@@ -2,6 +2,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Pencil, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import Link from "next/link";
+import axios from "axios";
+import { http_server } from "@/config";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -9,26 +13,41 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    console.log("Sign in:", { email, password });
-    alert("Sign in successful!");
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post(`${http_server}/signin`,{
+        email : email ,
+        password : password
+      })
+
+      if(response.data.success){
+        alert(response.data.message);
+        localStorage.setItem("token",response.data.token)
+        router.push('/dashboard')
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    finally{
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-orange-50 flex flex-col">
       {/* Header */}
       <header className="p-6">
-        <a href="/" className="flex items-center gap-2 w-fit cursor-pointer">
+        <Link href="/" className="flex items-center gap-2 w-fit cursor-pointer">
           <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-sm">
             <Pencil className="w-5 h-5 text-white" />
           </div>
           <span className="font-display text-2xl text-gray-900 font-bold">Sketchboard</span>
-        </a>
+        </Link>
       </header>
 
       {/* Main Content */}
@@ -160,7 +179,7 @@ const SignIn = () => {
 
             {/* Sign Up Link */}
             <p className="text-center mt-8 text-gray-600 font-body">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <a href="/signup" className="text-orange-500 hover:text-orange-600 hover:underline font-semibold">
                 Sign up free
               </a>

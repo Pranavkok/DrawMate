@@ -1,0 +1,25 @@
+
+
+> frontend@0.1.0 lint /Users/pranav/Desktop/Excali/drawmate/apps/frontend
+> eslint
+
+[0m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/create-room/page.tsx[24m[0m
+[0m  [2m7:18[22m  [33mwarning[39m  'ArrowLeft' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/signin/page.tsx[24m[0m
+[0m  [2m182:18[22m  [31merror[39m  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  [2mreact/no-unescaped-entities[22m[0m
+[0m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/components/MainCanvas.tsx[24m[0m
+[0m   [2m3:10[22m  [33mwarning[39m  'drawon' is defined but never used                                                                                        [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m38:7[22m   [33mwarning[39m  React Hook useEffect has missing dependencies: 'roomId' and 'socket'. Either include them or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/components/RoomCanvas.tsx[24m[0m
+[0m  [2m24:7[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'roomId'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/draw/index.ts[24m[0m
+[0m  [2m57:40[22m  [33mwarning[39m  'e' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[31m[1m✖ 6 problems (1 error, 5 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Pencil, Eye, EyeOff, Mail, Lock, User, Check } from "lucide-react";
+import axios from "axios";
+import { http_server } from "@/config";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -13,14 +16,30 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreedToTerms) return;
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    console.log("Sign up:", { name, email, password });
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post(`${http_server}/signup`,{
+        email : email ,
+        password : password ,
+        name : name
+      })
+
+      if(response.data.success){
+        alert(response.data.message);
+        localStorage.setItem("token",response.data.token)
+        router.push('/dashboard')
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    finally{
+      setIsLoading(false);
+    }
   };
 
   const passwordStrength = () => {
