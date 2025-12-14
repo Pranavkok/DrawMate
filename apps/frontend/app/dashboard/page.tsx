@@ -1,32 +1,63 @@
 "use client"
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Users, Clock, MoreVertical, Trash2, Copy, ExternalLink, Search, Grid, List, Pencil } from "lucide-react";
+import axios from "axios";
+import { http_server } from "@/config";
+import { useRouter } from "next/navigation";
 
 interface Room {
   id: string;
-  name: string;
-  participants: number;
-  lastEdited: string;
-  thumbnail: string;
+  slug: string;
+  createdAt: string;
 }
 
 const Home = () => {
-  const [rooms] = useState<Room[]>([
-    { id: "1", name: "Product Brainstorm", participants: 5, lastEdited: "2 hours ago", thumbnail: "brainstorm" },
-    { id: "2", name: "UI Wireframes", participants: 3, lastEdited: "1 day ago", thumbnail: "wireframe" },
-    { id: "3", name: "Architecture Diagram", participants: 8, lastEdited: "3 days ago", thumbnail: "diagram" },
-    { id: "4", name: "Sprint Planning", participants: 4, lastEdited: "1 week ago", thumbnail: "planning" },
-    { id: "5", name: "User Flow", participants: 2, lastEdited: "2 weeks ago", thumbnail: "flow" },
-    { id: "6", name: "Design System", participants: 6, lastEdited: "1 month ago", thumbnail: "design" },
-  ]);
+
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  async function getRooms(): Promise<Room[]> {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        return [];
+      }
+      const response = await axios.get(`${http_server}/get-rooms`,{
+        headers : {
+          Authorization : token
+        }
+      })
+      if(response.data.success){
+        return response.data.userRooms ;
+      }
+      else{
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const fetchedRooms = await getRooms();
+      setRooms(fetchedRooms);
+      setLoading(false);
+    };
+
+    fetchRooms();
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const filteredRooms = rooms.filter((room) =>
-    room.name.toLowerCase().includes(searchQuery.toLowerCase())
+    room.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getThumbnailPattern = (type: string) => {
@@ -88,6 +119,8 @@ const Home = () => {
     };
     return patterns[type] || patterns.brainstorm;
   };
+
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -176,7 +209,11 @@ const Home = () => {
         </motion.div>
 
         {/* Rooms Grid/List */}
-        {filteredRooms.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-16">
+            <h3 className="font-display text-2xl text-gray-900 mb-2">Loading rooms...</h3>
+          </div>
+        ) : filteredRooms.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -193,7 +230,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
-                className={`group relative bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-orange-500 transition-all hover:shadow-lg ${
+                className={`group relative bg-white border-2 border-gray-200 rounded-xl hover:border-orange-500 transition-all hover:shadow-lg ${
                   viewMode === "list" ? "flex items-center" : ""
                 }`}
               >
@@ -208,7 +245,7 @@ const Home = () => {
                     className="w-full h-full p-4"
                     preserveAspectRatio="xMidYMid meet"
                   >
-                    {getThumbnailPattern(room.thumbnail)}
+                    {getThumbnailPattern("diagram")}
                   </svg>
                 </div>
 
@@ -216,23 +253,20 @@ const Home = () => {
                 <div className={`p-4 ${viewMode === "list" ? "flex-1 flex items-center justify-between" : ""}`}>
                   <div className={viewMode === "list" ? "flex-1" : ""}>
                     <h3 className="font-display text-xl text-gray-900 group-hover:text-orange-500 transition-colors">
-                      {room.name}
+                      {room.slug}
                     </h3>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 font-body">
                       <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {room.participants}
-                      </span>
-                      <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {room.lastEdited}
+                        {room.createdAt}
                       </span>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="relative">
+                  <div className="relative ">
                     <button
+                      aria-label="Delete message"
                       onClick={() => setOpenMenuId(openMenuId === room.id ? null : room.id)}
                       className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
                     >
@@ -244,15 +278,13 @@ const Home = () => {
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          className="absolute right-0 top-full mt-1 w-48 bg-white border-2 border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden"
+                          className="absolute right-0 top-full mt-1 w-48 bg-white border-2 border-gray-200 rounded-lg shadow-lg z-40"
                         >
-                          <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 font-body">
+                          <button onClick={()=>{
+                            router.push(`/canvas/${room.id}`)
+                          }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 font-body">
                             <ExternalLink className="w-4 h-4" />
                             Open
-                          </button>
-                          <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 font-body">
-                            <Copy className="w-4 h-4" />
-                            Duplicate
                           </button>
                           <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-red-500 font-body">
                             <Trash2 className="w-4 h-4" />
