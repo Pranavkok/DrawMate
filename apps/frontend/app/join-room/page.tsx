@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Pencil, Users, Plus, Hash, ArrowRight } from "lucide-react";
+import axios from "axios";
+import { http_server } from "@/config";
 
 const JoinRoom = () => {
   const navigate = useRouter();
@@ -15,19 +17,31 @@ const JoinRoom = () => {
     e.preventDefault();
     if (!roomCode.trim()) return;
 
-    setIsJoining(true);
-    setError("");
+    try {
+      setIsJoining(true);
+      setError("");
+      const token = localStorage.getItem("token");
 
-    // Simulate room lookup
-    await new Promise(() => setTimeout(()=>{navigate.push(`/canvas/${roomCode}`)}, 1500));
+      const response = await axios.get(`${http_server}/join-room/${roomCode}`,{
+        headers : {
+          Authorization : token
+        }
+      });
 
-    if (roomCode.toLowerCase() === "invalid") {
-      setError("Room not found. Please check the code and try again.");
+      if(response.data.success){
+        if(response.data.isExists){
+          alert(response.data.message);
+          navigate.push(`/canvas/${response.data.roomId}`)
+        }
+        else{
+          alert(response.data.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally{
       setIsJoining(false);
-      return;
     }
-
-    navigate.push("/home");
   };
 
   return (

@@ -193,33 +193,60 @@ app.get("/get-rooms",middleware,async(req,res)=>{
     }
 })
 
-app.get("/search/:roomslug",middleware ,async(req,res)=>{
+app.get("/join-room/:slug",middleware,async(req,res)=>{
     try {
-        const roomslug = req.params.roomslug ;
-        // @ts-ignore
-        const userid = req.userId ;
-        const fetchedRooms = await prismaClient.room.findMany({
+        const roomslug = req.params.slug ;
+        const gotRoom = await prismaClient.room.findFirst({
             where : {
-                adminId : userid,
-                slug : {
-                    contains : roomslug ,
-                    mode : "insensitive"
-                }
+                slug : roomslug
             }
         })
 
-        return res.status(200).json({
-            message : "search room success" ,
+        if(!gotRoom){
+            return res.json({
+                message : "This room doesnt exists , You can create one ",
+                success : true ,
+                isExists : false 
+            })
+        }
+
+        return res.json({
+            message : "Welcome to the room",
             success : true ,
-            rooms : fetchedRooms
+            isExists : true  ,
+            roomId : gotRoom.id
         })
+
     } catch (error) {
         return res.status(500).json({
-            message : "Error Occured while searching for room",
+            message : "Server side error occured ",
             success : false 
         })
     }
 })
+
+// app.get("/search",middleware ,async(req,res)=>{
+//     try {
+//         // @ts-ignore
+//         const userid = req.userId ;
+//         const fetchedRooms = await prismaClient.room.findMany({
+//             where : {
+//                 adminId : userid,
+//             }
+//         })
+
+//         return res.status(200).json({
+//             message : "search room success" ,
+//             success : true ,
+//             rooms : fetchedRooms
+//         })
+//     } catch (error) {
+//         return res.status(500).json({
+//             message : "Error Occured while searching for room",
+//             success : false 
+//         })
+//     }
+// })
 
 app.get("/room-exists/:roomid",async(req,res)=>{
     try {
