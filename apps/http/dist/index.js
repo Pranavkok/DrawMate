@@ -143,4 +143,53 @@ app.get("/room/:slug", async (req, res) => {
         room
     });
 });
+app.get("/get-rooms", middleware, async (req, res) => {
+    try {
+        // @ts-ignore
+        const userid = req.userId;
+        const userRooms = await prismaClient.room.findMany({
+            where: {
+                adminId: userid
+            }
+        });
+        return res.status(200).json({
+            message: "Here are your Rooms",
+            success: true,
+            userRooms: userRooms
+        });
+    }
+    catch (error) {
+        return res.json({
+            message: "Error occured while getting your rooms",
+            success: false
+        });
+    }
+});
+app.get("/search/:roomslug", middleware, async (req, res) => {
+    try {
+        const roomslug = req.params.roomslug;
+        // @ts-ignore
+        const userid = req.userId;
+        const fetchedRooms = await prismaClient.room.findMany({
+            where: {
+                adminId: userid,
+                slug: {
+                    contains: roomslug,
+                    mode: "insensitive"
+                }
+            }
+        });
+        return res.status(200).json({
+            message: "search room success",
+            success: true,
+            rooms: fetchedRooms
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Error Occured while searching for room",
+            success: false
+        });
+    }
+});
 app.listen(3001);
