@@ -192,4 +192,33 @@ app.get("/search/:roomslug", middleware, async (req, res) => {
         });
     }
 });
+app.get("/room-exists/:roomid", async (req, res) => {
+    try {
+        // check /canvas/room
+        const roomid = req.params.roomid;
+        const exist = await prismaClient.room.findFirst({
+            where: {
+                id: Number(roomid)
+            }
+        });
+        if (!exist) {
+            return res.json({
+                message: "This room doesnt exists , You can create one ",
+                success: true,
+                isExists: false
+            });
+        }
+        return res.json({
+            message: "Welcome to the room",
+            success: true,
+            isExists: true
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Error occured while finding is this room exists ",
+            success: false
+        });
+    }
+});
 app.listen(3001);
