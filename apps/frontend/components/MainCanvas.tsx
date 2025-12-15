@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react"
 // import { IconButton } from "./IconButton";
 import { IconButton } from "./IconButton";
-import { Circle, Pencil, Square } from "lucide-react";
+import { Circle, Home, Pencil, Square } from "lucide-react";
 import { Game } from "@/draw/game";
+import { useRouter } from "next/navigation";
 
-export type Tool = "circle" | "rect" | "pencil";
+export type Tool = "circle" | "rect" | "pencil" | "home";
 
 export default function MainCanvas({
     roomId,
@@ -55,10 +56,11 @@ function Topbar({
     selectedTool: Tool;
     setSelectedTool: (s: Tool) => void;
   }) {
+    const router = useRouter();
     return (
       <div className="fixed top-6 left-6 z-50">
         <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-xl p-2">
-          <div className="flex gap-2">
+          <div className="flex gap-2 ">
             {/* <IconButton
               onClick={() => setSelectedTool("select")}
               activated={selectedTool === "select"}
@@ -104,7 +106,12 @@ function Topbar({
             
             {/* Divider */}
             <div className="w-px bg-gray-200 mx-1" />
-            
+            <IconButton
+              onClick={() => {router.push('/dashboard')}}
+              activated={selectedTool === "home"}
+              icon={<Home className="w-5 h-5" />}
+              label="Home (H)"
+            /> 
             
           </div>
         </div>
