@@ -87,12 +87,19 @@ export class Game {
             if(this.selectedTool === "rect"){
                 this.ctx.strokeRect(this.startX,this.startY,width,height)
             }
-            else if(this.selectedTool == "circle"){
+            else if(this.selectedTool === "circle"){
                 const radius = Math.max(width,height)/2 ;
                 const centerX = this.startX + radius ;
                 const centerY = this.startY + radius ; 
                 this.ctx.beginPath();
                 this.ctx.arc(centerX,centerY,Math.abs(radius),0,Math.PI * 2);
+                this.ctx.stroke();
+                this.ctx.closePath();
+            }
+            else if(this.selectedTool === "pencil"){
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.startX,this.startY);
+                this.ctx.lineTo(e.clientX,e.clientY)
                 this.ctx.stroke();
                 this.ctx.closePath();
             }
@@ -122,6 +129,15 @@ export class Game {
                 radius: radius,
                 centerX: this.startX + radius,
                 centerY: this.startY + radius,
+            }
+        }
+        else if(selectedTool === "pencil"){
+            shape = {
+                type: "pencil",
+                startX: this.startX,
+                startY: this.startY,
+                endX: e.clientX,
+                endY: e.clientY,
             }
         }
 

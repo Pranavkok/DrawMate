@@ -31,6 +31,12 @@ export function clearCanvas(canvas : HTMLCanvasElement , ctx : CanvasRenderingCo
             ctx.arc(s.centerX,s.centerY,Math.abs(s.radius),0,Math.PI * 2);
             ctx.stroke();
             ctx.closePath();
+        } else if (s.type === "pencil") {
+            ctx.beginPath();
+            ctx.moveTo(s.startX,s.startY);
+            ctx.lineTo(s.endX,s.endY)
+            ctx.stroke();
+            ctx.closePath();
         }
     })
 }
