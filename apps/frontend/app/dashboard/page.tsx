@@ -117,7 +117,10 @@ const Home = () => {
         </>
       ),
     };
-    return patterns[type] || patterns.brainstorm;
+    const arry = ["brainstorm","design","flow","wireframe","diagram","planning"] ;
+    const length = arry.length ;
+    const rand = Math.floor(Math.random()*length-1)
+    return patterns[arry[rand]] || patterns.brainstorm;
   };
 
 
@@ -185,14 +188,14 @@ const Home = () => {
               placeholder="Search your rooms..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg font-body focus:outline-none focus:border-orange-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg font-body focus:outline-none text-black focus:border-orange-500 transition-colors"
             />
           </div>
           <div className="flex items-center gap-2 bg-white border-2 border-gray-200 rounded-lg p-1">
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid" ? "bg-orange-500 text-white" : "hover:bg-gray-50"
+                viewMode === "grid" ? "bg-orange-500 text-white" : "hover:bg-gray-50 text-black"
               }`}
             >
               <Grid className="w-5 h-5" />
@@ -200,7 +203,7 @@ const Home = () => {
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === "list" ? "bg-orange-500 text-white" : "hover:bg-gray-50"
+                viewMode === "list" ? "bg-orange-500 text-white" : "hover:bg-gray-50 text-black"
               }`}
             >
               <List className="w-5 h-5" />
@@ -282,7 +285,7 @@ const Home = () => {
                         >
                           <button onClick={()=>{
                             router.push(`/canvas/${room.id}`)
-                          }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 font-body">
+                          }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex text-black items-center gap-2 font-body">
                             <ExternalLink className="w-4 h-4" />
                             Open
                           </button>
