@@ -3,7 +3,7 @@
 import { useEffect,useState } from "react" ;
 import MainCanvas from "./MainCanvas";
 import { http_server, ws_server } from "@/config";
-import SomethingWentWrong from "./GotError";
+import GotLoading from "./GotLoad";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -46,7 +46,7 @@ export default function RoomCanvas({roomId}: {roomId: string}){
     },[]);
 
     if (!socket) {
-        return <SomethingWentWrong/>
+        return <GotLoading/>
     }
 
     return(

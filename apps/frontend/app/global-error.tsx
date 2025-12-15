@@ -1,6 +1,13 @@
+"use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { AlertTriangle, RefreshCw, Home, MessageCircle, Pencil } from "lucide-react";
+import {
+  AlertTriangle,
+  RefreshCw,
+  Home,
+  MessageCircle,
+  Pencil,
+} from "lucide-react";
 
 export const SomethingWentWrong = () => {
   const handleRefresh = () => {
@@ -34,16 +41,24 @@ export const SomethingWentWrong = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
       >
-        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="10,5" />
+        <circle
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray="10,5"
+        />
         <line x1="25" y1="25" x2="75" y2="75" stroke="currentColor" strokeWidth="3" />
         <line x1="75" y1="25" x2="25" y2="75" stroke="currentColor" strokeWidth="3" />
       </motion.svg>
 
       <motion.div
         className="absolute top-1/4 right-16 w-6 h-6 bg-highlight/30 rounded-full"
-        animate={{ 
+        animate={{
           y: [0, -10, 0],
-          opacity: [0.3, 0.6, 0.3]
+          opacity: [0.3, 0.6, 0.3],
         }}
         transition={{ duration: 2, repeat: Infinity }}
       />
@@ -88,7 +103,7 @@ export const SomethingWentWrong = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="font-display text-4xl md:text-5xl text-foreground mb-4"
+            className="font-display text-4xl md:text-5xl text-destructive-foreground mb-4"
           >
             Oops! Something broke
           </motion.h1>
@@ -99,7 +114,8 @@ export const SomethingWentWrong = () => {
             transition={{ delay: 0.3 }}
             className="text-muted-foreground font-body text-lg mb-8 max-w-md mx-auto"
           >
-            Our pencils got a bit tangled up. Dont worry, we are sketching out a solution!
+            Our pencils got a bit tangled up. Dont worry, we are sketching out a
+            solution!
           </motion.p>
 
           {/* Sketch-style error illustration */}
@@ -109,7 +125,10 @@ export const SomethingWentWrong = () => {
             transition={{ delay: 0.4 }}
             className="mb-10"
           >
-            <svg viewBox="0 0 300 100" className="w-full max-w-xs mx-auto text-muted-foreground/40">
+            <svg
+              viewBox="0 0 300 100"
+              className="w-full max-w-xs mx-auto text-muted-foreground/40"
+            >
               {/* Broken line */}
               <motion.path
                 d="M20,50 C50,30 80,70 110,50"
@@ -167,7 +186,7 @@ export const SomethingWentWrong = () => {
               onClick={handleRefresh}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary text-primary-foreground rounded-xl font-display text-lg hover:bg-primary/90 transition-colors sketch-border"
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-destructive text-destructive-foreground rounded-xl font-display text-lg hover:bg-destructive/90 transition-colors sketch-border"
             >
               <RefreshCw className="w-5 h-5" />
               Try Again
