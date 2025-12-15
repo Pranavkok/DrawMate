@@ -40,17 +40,27 @@ export default function RoomCanvas({roomId}: {roomId: string}){
 
                 ws.send(JSON.stringify(data))
             }
+
+            return ws;
         }
         
-        checkRoom();
-    },[]);
+        let ws : WebSocket | undefined;
+
+        checkRoom().then((res)=>{
+            if(res) ws = res;
+        });
+
+        return ()=>{
+            ws?.close();
+        }
+    },[roomId]);
 
     if (!socket) {
         return <GotLoading/>
     }
 
     return(
-        <MainCanvas roomId={roomId} socket={socket} />
+        <MainCanvas key={roomId} roomId={roomId} socket={socket} />
     )
 }
 

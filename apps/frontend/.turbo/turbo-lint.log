@@ -4,18 +4,27 @@
 > eslint
 
 [0m[0m
-[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/create-room/page.tsx[24m[0m
-[0m  [2m7:18[22m  [33mwarning[39m  'ArrowLeft' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/dashboard/page.tsx[24m[0m
+[0m    [2m5:52[22m  [33mwarning[39m  'Copy' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m63:32[22m  [33mwarning[39m  'type' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m122:29[22m  [31merror[39m    Error: Cannot call impure function during render[0m
 [0m[0m
-[0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/signin/page.tsx[24m[0m
-[0m  [2m182:18[22m  [31merror[39m  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  [2mreact/no-unescaped-entities[22m[0m
+[0m`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).[0m
+[0m[0m
+[0m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/app/dashboard/page.tsx:122:29[0m
+[0m  120 |     const arry = ["brainstorm","design","flow","wireframe","diagram","planning"] ;[0m
+[0m  121 |     const length = arry.length ;[0m
+[0m> 122 |     const rand = Math.floor(Math.random()*length-1)[0m
+[0m      |                             ^^^^^^^^^^^^^ Cannot call impure function[0m
+[0m  123 |     return patterns[arry[rand]] || patterns.brainstorm;[0m
+[0m  124 |   };[0m
+[0m  125 |  [2mreact-hooks/purity[22m[0m
 [0m[0m
 [0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/components/MainCanvas.tsx[24m[0m
-[0m   [2m3:10[22m  [33mwarning[39m  'drawon' is defined but never used                                                                                        [2m@typescript-eslint/no-unused-vars[22m[0m
-[0m  [2m38:7[22m   [33mwarning[39m  React Hook useEffect has missing dependencies: 'roomId' and 'socket'. Either include them or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m  [2m38:7[22m  [33mwarning[39m  React Hook useEffect has missing dependencies: 'roomId' and 'socket'. Either include them or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
 [0m[0m
 [0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/components/RoomCanvas.tsx[24m[0m
-[0m  [2m24:7[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'roomId'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m  [2m56:7[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
 [0m[0m
 [0m[4m/Users/pranav/Desktop/Excali/drawmate/apps/frontend/draw/index.ts[24m[0m
 [0m  [2m57:40[22m  [33mwarning[39m  'e' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m

@@ -20,6 +20,14 @@ type Shape = {
     startY: number;
     endX: number;
     endY: number;
+} | {
+    type: "text";
+    x: number;
+    y: number;
+    text: string;
+    fontSize: number;
+    fontFamily: string;
+    color: string;
 }
 
 export class Game {
@@ -31,6 +39,8 @@ export class Game {
     private startX = 0;
     private startY = 0;
     private selectedTool: Tool = "circle";
+    private activeInput: HTMLTextAreaElement | null = null;
+    private activeInputCoords: { x: number, y: number } | null = null;
 
     socket : WebSocket;
 
@@ -52,7 +62,48 @@ export class Game {
         this.canvas.removeEventListener("mouseup", this.mouseUpHandler)
 
         this.canvas.removeEventListener("mousemove", this.mouseMoveHandler)
+        if (this.activeInput) {
+            document.body.removeChild(this.activeInput);
+            this.activeInput = null;
+            this.activeInputCoords = null; // Also clear coords on destroy
+        }
     }
+
+    private _finalizeActiveInput = () => {
+        if (!this.activeInput || !this.activeInputCoords) return;
+
+        const text = this.activeInput.value.trim();
+        if (text) {
+            const shape: Shape = {
+                type: "text",
+                x: this.activeInputCoords.x,
+                y: this.activeInputCoords.y,
+                text: text,
+                fontSize: 16,
+                fontFamily: "Arial",
+                color: "red",
+            };
+            this.existingShapes.push(shape);
+            clearCanvas(this.canvas, this.ctx, this.existingShapes);
+
+            this.socket.send(JSON.stringify({
+                type: "chat",
+                message: JSON.stringify({
+                    shape
+                }),
+                roomId: this.roomId
+            }));
+        }
+        document.body.removeChild(this.activeInput);
+        this.activeInput = null;
+        this.activeInputCoords = null;
+    };
+
+    private documentClickHandler = (e: MouseEvent) => {
+        if (this.activeInput && e.target !== this.activeInput && e.target !== this.canvas) {
+            this._finalizeActiveInput();
+        }
+    };
 
     async init(){
         this.existingShapes = await getExistingContent(this.roomId);
@@ -70,13 +121,75 @@ export class Game {
         }
     }
 
-    mouseDownHandler = (e) => {
+    getCanvasCoords(e: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+    }
+
+    mouseDownHandler = (e : MouseEvent) => {
+        // If there's an active text input and the selected tool is not text, finalize it.
+        // Or if the selected tool is text, and we click somewhere else to create a new one,
+        // finalize the old one first.
+        if (this.activeInput && (this.selectedTool !== "text" || !e.target || (e.target !== this.activeInput && e.target !== this.canvas))) {
+            this._finalizeActiveInput();
+        }
+
         this.clicked = true
         this.startX = e.clientX
         this.startY = e.clientY
+
+        if(this.selectedTool == "text"){
+            const { x, y } = this.getCanvasCoords(e);
+
+            // If there's an existing active input, finalize it before creating a new one.
+            // This is already handled by the check at the beginning of the function,
+            // but keeping this explicit check here for clarity in this specific branch.
+            if (this.activeInput) {
+                this._finalizeActiveInput();
+            }
+
+            const input = document.createElement("textarea");
+            input.style.position = "absolute";
+            input.style.left = `${x}px`;
+            input.style.top = `${y}px`;
+            input.style.border = "1px solid #888";
+            input.style.background = "yellow";
+            input.style.color = "red";
+            input.style.fontSize = "16px";
+            input.style.fontFamily = "Arial";
+            input.style.outline = "none";
+            input.style.resize = "none";
+            input.style.cursor = "none";
+            input.style.width = "150px";
+            input.style.height = "50px";
+
+            document.body.appendChild(input);
+            this.activeInput = input;
+            this.activeInputCoords = { x, y };
+            input.focus();
+
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent document click handler from firing
+                    this._finalizeActiveInput();
+                }
+            });
+
+            // Prevent clicks on the textarea from propagating to the document click handler
+            input.addEventListener("mousedown", (e) => {
+                e.stopPropagation();
+            });
+        }
     }
 
     mouseMoveHandler = (e)=>{
+        if(this.selectedTool === "text"){
+            return ;
+        }
         if(this.clicked){
             const width = e.clientX - this.startX ;
             const height = e.clientY - this.startY;
@@ -106,6 +219,9 @@ export class Game {
         }
     }
     mouseUpHandler = (e)=>{
+        if(this.selectedTool === "text"){
+            return ;
+        }
         this.clicked = false ;
         const width = e.clientX - this.startX;
         const height = e.clientY - this.startY;
@@ -163,9 +279,14 @@ export class Game {
         this.canvas.addEventListener('mousedown',this.mouseDownHandler);
         this.canvas.addEventListener('mousemove',this.mouseMoveHandler);
         this.canvas.addEventListener('mouseup',this.mouseUpHandler);
+        document.addEventListener("mousedown", this.documentClickHandler);
     }
 
-    setTool(tool: "circle" | "pencil" | "rect") {
+    setTool(tool: "circle" | "pencil" | "rect" | "text" | "home") {
+        if (this.activeInput && this.selectedTool === "text" && tool !== "text") {
+            this._finalizeActiveInput();
+        }
         this.selectedTool = tool;
     }
+
 }

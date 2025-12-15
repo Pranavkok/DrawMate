@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react"
 // import { IconButton } from "./IconButton";
 import { IconButton } from "./IconButton";
-import { Circle, Home, Pencil, Square } from "lucide-react";
+import { Circle, Home, Pencil, Square , Type } from "lucide-react";
 import { Game } from "@/draw/game";
 import { useRouter } from "next/navigation";
 
-export type Tool = "circle" | "rect" | "pencil" | "home";
+export type Tool = "circle" | "rect" | "pencil" | "home" | "text";
 
 export default function MainCanvas({
     roomId,
@@ -61,12 +61,6 @@ function Topbar({
       <div className="fixed top-6 left-6 z-50">
         <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-xl p-2">
           <div className="flex gap-2 ">
-            {/* <IconButton
-              onClick={() => setSelectedTool("select")}
-              activated={selectedTool === "select"}
-              icon={<MousePointer className="w-5 h-5" />}
-              label="Select (V)"
-            /> */}
             <IconButton
               onClick={() => setSelectedTool("pencil")}
               activated={selectedTool === "pencil"}
@@ -85,24 +79,13 @@ function Topbar({
               icon={<Circle className="w-5 h-5" />}
               label="Circle (C)"
             />
-            {/* <IconButton
-              onClick={() => setSelectedTool("line")}
-              activated={selectedTool === "line"}
-              icon={<Minus className="w-5 h-5" />}
-              label="Line (L)"
-            /> */}
-            {/* <IconButton
-              onClick={() => setSelectedTool("arrow")}
-              activated={selectedTool === "arrow"}
-              icon={<ArrowRight className="w-5 h-5" />}
-              label="Arrow (A)"
-            />
+
             <IconButton
               onClick={() => setSelectedTool("text")}
               activated={selectedTool === "text"}
               icon={<Type className="w-5 h-5" />}
               label="Text (T)"
-            /> */}
+            />
             
             {/* Divider */}
             <div className="w-px bg-gray-200 mx-1" />

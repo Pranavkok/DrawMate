@@ -15,6 +15,14 @@ type Shape = {
     startY: number;
     endX: number;
     endY: number;
+} | {
+    type: "text";
+    x: number;
+    y: number;
+    text: string;
+    fontSize: number;
+    fontFamily: string;
+    color: string;
 }
 
 export function clearCanvas(canvas : HTMLCanvasElement , ctx : CanvasRenderingContext2D , existingShape : Shape[]){
@@ -37,6 +45,10 @@ export function clearCanvas(canvas : HTMLCanvasElement , ctx : CanvasRenderingCo
             ctx.lineTo(s.endX,s.endY)
             ctx.stroke();
             ctx.closePath();
+        } else if(s.type === "text"){
+            ctx.font = `${s.fontSize}px ${s.fontFamily}`;
+            ctx.fillStyle = s.color;
+            ctx.fillText(s.text, s.x, s.y);
         }
     })
 }
