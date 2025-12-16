@@ -42,6 +42,10 @@ const Home = () => {
     }
   }
 
+  async function deleteRooms(roomId){
+   
+  }
+
   useEffect(() => {
     const fetchRooms = async () => {
       const fetchedRooms = await getRooms();
@@ -289,7 +293,26 @@ const Home = () => {
                             <ExternalLink className="w-4 h-4" />
                             Open
                           </button>
-                          <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-red-500 font-body">
+                          <button onClick={async()=>{
+                             try {
+                              const token = localStorage.getItem("token");
+                              if(!token){
+                                alert("please login")
+                                return ;
+                              }
+                              const response = await axios.delete(`${http_server}/delete-room/${room.id}`,{
+                                headers : {
+                                  Authorization : token
+                                }
+                              })
+                              if(response.data.success){
+                                alert(response.data.message);
+                                window.location.reload();
+                              }
+                            } catch (error) {
+                              console.log(error);
+                            }
+                          }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-red-500 font-body">
                             <Trash2 className="w-4 h-4" />
                             Delete
                           </button>

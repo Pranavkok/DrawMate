@@ -193,6 +193,47 @@ app.get("/get-rooms",middleware,async(req,res)=>{
     }
 })
 
+app.delete("/delete-room/:roomId",middleware,async(req,res)=>{
+    try {
+        // @ts-ignore
+        const userid = req.userId ;
+        const roomId = Number(req.params.roomId);
+
+        await prismaClient.chat.deleteMany({
+            where: {
+                roomId: roomId
+            }
+        });
+
+        const deletedRoom = await prismaClient.room.delete({
+            where : {
+                adminId : userid ,
+                id : roomId, 
+            }
+        })
+
+        if(!deletedRoom){
+            return res.status(404).json({ 
+                message : "No Room Found" ,
+                success : true
+            })
+        }
+
+        return res.status(200).json({
+            message : "Room Deleted success" ,
+            success : true
+        })
+        
+    } catch (error) {
+        console.error(error); 
+        return res.status(500).json({ 
+            message: "Failed to delete room due to server error",
+            success: false,
+            error: error
+        });
+    }
+})
+
 app.get("/join-room/:slug",middleware,async(req,res)=>{
     try {
         const roomslug = req.params.slug ;
@@ -279,5 +320,7 @@ app.get("/room-exists/:roomid",async(req,res)=>{
         })
     }
 })
+
+
 
 app.listen(3001);
